@@ -54,3 +54,15 @@
     expires-at: uint
   }
 )
+
+;; Vote tracking per proposal and voter
+(define-map votes {proposal-id: uint, voter: principal} bool)
+
+;; Cross-DAO collaboration tracking
+(define-map collaborations uint 
+  {
+    partner-dao: principal,
+    proposal-id: uint,
+    status: (string-ascii 10)
+  }
+)
