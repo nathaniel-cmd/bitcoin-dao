@@ -96,3 +96,38 @@
     false
   )
 )
+
+
+;; Validates collaboration existence
+(define-private (is-valid-collaboration-id (collaboration-id uint))
+  (match (map-get? collaborations collaboration-id)
+    collaboration true
+    false
+  )
+)
+
+;; Calculates member voting power based on reputation and stake
+(define-private (calculate-voting-power (user principal))
+  (let (
+    (member-data (unwrap! (map-get? members user) u0))
+    (reputation (get reputation member-data))
+    (stake (get stake member-data))
+  )
+    (+ (* reputation u10) stake)
+  )
+)
+
+;; Updates member reputation with activity tracking
+(define-private (update-member-reputation (user principal) (change int))
+  (match (map-get? members user)
+    member-data 
+    (let (
+      (new-reputation (to-uint (+ (to-int (get reputation member-data)) change)))
+      (updated-data (merge member-data {reputation: new-reputation, last-interaction: block-height}))
+    )
+      (map-set members user updated-data)
+      (ok new-reputation)
+    )
+    ERR-NOT-MEMBER
+  )
+)
